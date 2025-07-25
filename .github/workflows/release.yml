@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ssh-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           fetch-tags: 'true'
       - name: Refuse releasing off-main
         if: ${{ github.ref != 'refs/heads/main' || github.ref_type != 'branch' }}
@@ -34,7 +35,6 @@ jobs:
           trap "rm '${DEPLOY_KEY_FILE}' && echo 'gone'" EXIT
           git config user.signingKey "${DEPLOY_KEY_FILE}"
           git config gpg.format ssh
-          git config core.sshCommand "/usr/bin/ssh -i '${DEPLOY_KEY_FILE}'"
 
           NEXT_TAG="$(.github/find-next-tag.sh)"
           git tag \
