@@ -21,8 +21,6 @@ jobs:
           exit 1
       - name: Create release tag
         if: ${{ github.ref == 'refs/heads/main' && github.ref_type == 'branch' }}
-        env:
-          DEPLOY_KEY_PEM: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         run: |
           set -eu
           git config user.name "github-actions[bot]"
@@ -30,9 +28,8 @@ jobs:
 
           DEPLOY_KEY_FILE="$(mktemp)"
           touch "${DEPLOY_KEY_FILE}"
-          printf "%s\n" "${DEPLOY_KEY_PEM}" >> "${DEPLOY_KEY_FILE}"
-          file "${DEPLOY_KEY_FILE}"
-          trap "rm '${DEPLOY_KEY_FILE}' && echo 'gone'" EXIT
+          printf "%s\n" "${{ secrets.ACTIONS_DEPLOY_KEY }}" >> "${DEPLOY_KEY_FILE}"
+          trap "rm '${DEPLOY_KEY_FILE}' && echo 'deleted key'" EXIT
           git config user.signingKey "${DEPLOY_KEY_FILE}"
           git config gpg.format ssh
 
