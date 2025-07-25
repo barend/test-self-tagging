@@ -1,0 +1,2 @@
+# git config gpg.ssh.allowedSignersFile allowed-signers.txt
+github-actions[bot]@users.noreply.github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDv0IetBMENSgufkjPpICAxpbqLk7ZiEikekKIQQTp13
