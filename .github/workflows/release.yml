@@ -20,7 +20,7 @@ jobs:
           exit 1
       - name: Create release tag
         if: ${{ github.ref == 'refs/heads/main' && github.ref_type == 'branch' }}
-        with:
+        env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |
           set -eu
@@ -28,9 +28,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           umask 077
-          printf "${{ inputs.DEPLOY_KEY }}" > deploy_key
+          printf "${DEPLOY_KEY}" > deploy_key
           file deploy_key
-          trap "rm deploy_key" EXIT
+          trap "rm deploy_key && echo 'gone'" EXIT
           git config user.signingKey deploy_key
           git config gpg.format ssh
           git config core.sshCommand "/usr/bin/ssh -i "$PWD/deploy_key"
