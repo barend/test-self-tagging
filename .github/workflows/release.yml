@@ -21,7 +21,7 @@ jobs:
       - name: Create release tag
         if: ${{ github.ref == 'refs/heads/main' && github.ref_type == 'branch' }}
         env:
-          DEPLOY_KEY_PEM: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_KEY_PEM: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         run: |
           set -eu
           git config user.name "github-actions[bot]"
