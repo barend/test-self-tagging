@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   tag-release:
@@ -24,9 +24,19 @@ jobs:
           set -eu
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          umask 077
+          printf "${{ secrets.DEPLOY_KEY }}" > deploy_key
+          file deploy_key
+          trap "rm deploy_key" EXIT
+          git config user.signingKey deploy_key
+          git config gpg.format ssh
+          git config core.sshCommand "/usr/bin/ssh -i "$PWD/deploy_key"
+
           NEXT_TAG="$(.github/find-next-tag.sh)"
           git tag \
             --annotate \
             --message "Release ${NEXT_TAG} by ${{ github.triggering_actor }}" \
+            --sign \
             "${NEXT_TAG}"
           git push origin "${NEXT_TAG}"
